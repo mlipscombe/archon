@@ -1,5 +1,11 @@
 # Archon
 
+[![CI](https://github.com/mlipscombe/archon/actions/workflows/ci.yml/badge.svg)](https://github.com/mlipscombe/archon/actions/workflows/ci.yml)
+[![Docker Publish](https://github.com/mlipscombe/archon/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/mlipscombe/archon/actions/workflows/docker-publish.yml)
+[![Release](https://github.com/mlipscombe/archon/actions/workflows/release.yml/badge.svg)](https://github.com/mlipscombe/archon/actions/workflows/release.yml)
+[![GHCR Archon](https://img.shields.io/badge/ghcr-archon-blue?logo=docker)](https://github.com/users/mlipscombe/packages/container/package/archon)
+[![GHCR Sandbox](https://img.shields.io/badge/ghcr-archon--opencode--sandbox-blue?logo=docker)](https://github.com/users/mlipscombe/packages/container/package/archon-opencode-sandbox)
+
 Archon is a local-first autonomous software development orchestrator for Jira + GitHub.
 
 This repository currently implements the MVP spine:

@@ -9,9 +9,14 @@ on:
   workflow_dispatch:
 
 env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   REGISTRY: ghcr.io
   ARCHON_IMAGE: ghcr.io/mlipscombe/archon
   SANDBOX_IMAGE: ghcr.io/mlipscombe/archon-opencode-sandbox
+
+concurrency:
+  group: docker-publish-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   publish:
@@ -71,6 +76,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.archon_meta.outputs.tags }}
           labels: ${{ steps.archon_meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Build and push sandbox image
         uses: docker/build-push-action@v6
@@ -81,3 +88,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.sandbox_meta.outputs.tags }}
           labels: ${{ steps.sandbox_meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

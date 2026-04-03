@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Archon</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      body {
+        margin: 0;
+        background: #0b1020;
+        color: #eef2ff;
+      }
+      main {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 48px 20px 72px;
+      }
+      .hero {
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.9));
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 20px 60px rgba(15, 23, 42, 0.45);
+      }
+      .eyebrow {
+        display: inline-block;
+        margin-bottom: 12px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(56, 189, 248, 0.12);
+        color: #7dd3fc;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      h1 {
+        margin: 0 0 12px;
+        font-size: clamp(32px, 5vw, 52px);
+        line-height: 1;
+      }
+      p {
+        margin: 0;
+        color: #cbd5e1;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-top: 28px;
+      }
+      .card {
+        border-radius: 16px;
+        background: rgba(15, 23, 42, 0.72);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        padding: 18px;
+      }
+      .label {
+        color: #94a3b8;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .value {
+        display: block;
+        margin-top: 10px;
+        font-size: 18px;
+        font-weight: 700;
+        color: #f8fafc;
+        word-break: break-word;
+      }
+      .footer {
+        margin-top: 24px;
+        color: #94a3b8;
+        font-size: 14px;
+      }
+      .sessions {
+        margin-top: 26px;
+        border-radius: 18px;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        background: rgba(2, 6, 23, 0.55);
+        overflow: hidden;
+      }
+      .sessions-header {
+        padding: 16px 18px;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+        font-size: 14px;
+        color: #cbd5e1;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 14px 18px;
+        text-align: left;
+        vertical-align: top;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+      }
+      th {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #94a3b8;
+      }
+      td {
+        color: #e2e8f0;
+        font-size: 14px;
+      }
+      .session-key {
+        font-weight: 700;
+        color: #f8fafc;
+      }
+      .session-link {
+        color: #f8fafc;
+        text-decoration: none;
+      }
+      .session-link:hover {
+        text-decoration: underline;
+      }
+      .muted {
+        color: #94a3b8;
+      }
+      .reason {
+        margin-top: 6px;
+        color: #94a3b8;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+      .error {
+        margin-top: 6px;
+        color: #fca5a5;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+      .empty {
+        padding: 18px;
+        color: #94a3b8;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <span class="eyebrow">Archon MVP</span>
+        <h1>Daemon online</h1>
+        <p>
+          The process, database, and local web surface are up. Jira polling, evaluation,
+          and implementation workflows will attach to this shell as the next build phases land.
+        </p>
+
+        <div class="grid">
+          <article class="card">
+            <span class="label">Mode</span>
+            <span class="value">{{ .Mode }}</span>
+          </article>
+          <article class="card">
+            <span class="label">Jira Project</span>
+            <span class="value">{{ .Project }}</span>
+          </article>
+          <article class="card">
+            <span class="label">GitHub Repo</span>
+            <span class="value">{{ .Repo }}</span>
+          </article>
+          <article class="card">
+            <span class="label">Started</span>
+            <span class="value">{{ .StartedAt.Format "2006-01-02 15:04:05 MST" }}</span>
+          </article>
+        </div>
+
+        <p class="footer">
+          Config source: {{ if .Config }}{{ .Config }}{{ else }}environment / defaults{{ end }}
+        </p>
+
+        <section class="sessions">
+          <div class="sessions-header">Observed sessions</div>
+          {{ if .Sessions }}
+          <table>
+            <thead>
+              <tr>
+                <th>Issue</th>
+                <th>State</th>
+                <th>Type</th>
+                <th>Priority</th>
+                <th>Jira Status</th>
+                <th>Updated</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{ range .Sessions }}
+              <tr>
+                <td>
+                  <div class="session-key"><a class="session-link" href="/sessions/{{ .IssueKey }}">{{ .IssueKey }}</a></div>
+                  <div>{{ .IssueSummary }}</div>
+                  {{ if .Reasoning }}<div class="reason">{{ .Reasoning }}</div>{{ end }}
+                  {{ if .LastError }}<div class="error">{{ .LastError }}</div>{{ end }}
+                </td>
+                <td>
+                  <div>{{ .State }}</div>
+                  {{ if .Decision }}<div class="muted">{{ .Decision }} {{ printf "%.2f" .Confidence }}</div>{{ end }}
+                </td>
+                <td>{{ if .IssueType }}{{ .IssueType }}{{ else }}<span class="muted">-</span>{{ end }}</td>
+                <td>{{ if .Priority }}{{ .Priority }}{{ else }}<span class="muted">-</span>{{ end }}</td>
+                <td>{{ if .JiraStatus }}{{ .JiraStatus }}{{ else }}<span class="muted">-</span>{{ end }}</td>
+                <td>{{ .UpdatedAt.Format "2006-01-02 15:04:05 MST" }}</td>
+              </tr>
+              {{ end }}
+            </tbody>
+          </table>
+          {{ else }}
+          <div class="empty">No Jira tickets have been observed yet.</div>
+          {{ end }}
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

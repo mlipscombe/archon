@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ .Session.IssueKey }} · Archon</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+      body {
+        margin: 0;
+        background: #0b1020;
+        color: #eef2ff;
+      }
+      main {
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 36px 20px 72px;
+      }
+      a {
+        color: #7dd3fc;
+      }
+      .header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 22px;
+      }
+      .title {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 42px);
+        line-height: 1.05;
+      }
+      .subtitle {
+        margin-top: 8px;
+        color: #94a3b8;
+      }
+      .back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        color: #cbd5e1;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+      .card {
+        border-radius: 18px;
+        background: rgba(15, 23, 42, 0.82);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        padding: 18px;
+      }
+      .label {
+        color: #94a3b8;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .value {
+        margin-top: 8px;
+        font-size: 18px;
+        font-weight: 700;
+        color: #f8fafc;
+      }
+      .section {
+        margin-top: 18px;
+        border-radius: 18px;
+        background: rgba(15, 23, 42, 0.82);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        padding: 20px;
+      }
+      .section h2 {
+        margin: 0 0 14px;
+        font-size: 18px;
+      }
+      .muted {
+        color: #94a3b8;
+      }
+      .link-row {
+        margin-top: 10px;
+      }
+      .error {
+        margin-bottom: 16px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: rgba(127, 29, 29, 0.45);
+        border: 1px solid rgba(248, 113, 113, 0.35);
+        color: #fecaca;
+      }
+      ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+      li + li {
+        margin-top: 10px;
+      }
+      .question {
+        padding: 14px 0;
+        border-top: 1px solid rgba(148, 163, 184, 0.12);
+      }
+      .question:first-child {
+        border-top: 0;
+        padding-top: 0;
+      }
+      .question-title {
+        font-weight: 700;
+        color: #f8fafc;
+      }
+      .question-meta {
+        margin-top: 8px;
+        color: #cbd5e1;
+        line-height: 1.5;
+      }
+      textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background: rgba(2, 6, 23, 0.6);
+        color: #eef2ff;
+        box-sizing: border-box;
+      }
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: flex-start;
+      }
+      button {
+        appearance: none;
+        border: 0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .approve {
+        background: #22c55e;
+        color: #082f1a;
+      }
+      .reject {
+        background: #ef4444;
+        color: #fff;
+      }
+      .inline-form {
+        flex: 1 1 360px;
+      }
+      .history-item {
+        padding: 14px 0;
+        border-top: 1px solid rgba(148, 163, 184, 0.12);
+      }
+      .history-item:first-child {
+        border-top: 0;
+        padding-top: 0;
+      }
+      .history-title {
+        font-weight: 700;
+        color: #f8fafc;
+      }
+      .history-meta {
+        margin-top: 6px;
+        color: #94a3b8;
+        font-size: 13px;
+      }
+      details {
+        margin-top: 10px;
+      }
+      summary {
+        cursor: pointer;
+        color: #7dd3fc;
+      }
+      pre {
+        margin: 10px 0 0;
+        padding: 14px;
+        border-radius: 12px;
+        background: rgba(2, 6, 23, 0.8);
+        border: 1px solid rgba(148, 163, 184, 0.14);
+        color: #e2e8f0;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      .live-log {
+        min-height: 180px;
+        max-height: 480px;
+        overflow-y: auto;
+      }
+      .log-line {
+        margin-top: 10px;
+      }
+      .log-stamp {
+        color: #94a3b8;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a class="back" href="/">← Back to sessions</a>
+      <div class="header">
+        <div>
+          <h1 class="title">{{ .Session.IssueKey }}</h1>
+          <div class="subtitle">{{ .Session.IssueSummary }}</div>
+        </div>
+      </div>
+
+      {{ if .Error }}<div class="error">{{ .Error }}</div>{{ end }}
+      {{ if .Session.LastError }}<div class="error">{{ .Session.LastError }}</div>{{ end }}
+
+      <div class="grid">
+        <article class="card"><div class="label">State</div><div class="value">{{ .Session.State }}</div></article>
+        <article class="card"><div class="label">Decision</div><div class="value">{{ if .Session.Decision }}{{ .Session.Decision }} {{ printf "%.2f" .Session.Confidence }}{{ else }}-{{ end }}</div></article>
+        <article class="card"><div class="label">Type</div><div class="value">{{ if .Session.IssueType }}{{ .Session.IssueType }}{{ else }}-{{ end }}</div></article>
+        <article class="card"><div class="label">Priority</div><div class="value">{{ if .Session.Priority }}{{ .Session.Priority }}{{ else }}-{{ end }}</div></article>
+      </div>
+
+      <section class="section">
+        <h2>Reasoning</h2>
+        <div class="muted">{{ if .Session.Reasoning }}{{ .Session.Reasoning }}{{ else }}No evaluation reasoning recorded yet.{{ end }}</div>
+      </section>
+
+      <section class="section">
+        <h2>Suggested Scope</h2>
+        <div class="muted">{{ if .Session.SuggestedScope }}{{ .Session.SuggestedScope }}{{ else }}No suggested scope yet.{{ end }}</div>
+        {{ if .Session.ImplementationSummary }}<div class="link-row"><strong>Implementation summary:</strong> {{ .Session.ImplementationSummary }}</div>{{ end }}
+        {{ if .Session.BranchName }}<div class="link-row"><strong>Branch:</strong> <code>{{ .Session.BranchName }}</code></div>{{ end }}
+        {{ if .Session.PRURL }}<div class="link-row"><strong>Pull request:</strong> <a href="{{ .Session.PRURL }}" target="_blank" rel="noreferrer">{{ .Session.PRURL }}</a></div>{{ end }}
+      </section>
+
+      <section class="section">
+        <h2>Clarifying Questions</h2>
+        {{ if .Session.ClarifyingQuestions }}
+          {{ range .Session.ClarifyingQuestions }}
+          <div class="question">
+            <div class="question-title">{{ .Question }}</div>
+            {{ if .SuggestedAnswer }}<div class="question-meta"><strong>Suggested answer:</strong> {{ .SuggestedAnswer }}</div>{{ end }}
+            {{ if .Rationale }}<div class="question-meta"><strong>Rationale:</strong> {{ .Rationale }}</div>{{ end }}
+          </div>
+          {{ end }}
+        {{ else }}
+          <div class="muted">No clarifying questions recorded.</div>
+        {{ end }}
+      </section>
+
+      <section class="section">
+        <h2>Out of Scope Assumptions</h2>
+        {{ if .Session.OutOfScope }}
+          <ul>
+            {{ range .Session.OutOfScope }}<li>{{ . }}</li>{{ end }}
+          </ul>
+        {{ else }}
+          <div class="muted">No out-of-scope assumptions recorded.</div>
+        {{ end }}
+      </section>
+
+      <section class="section">
+        <h2>Approval Controls</h2>
+        {{ if eq .Session.State "AWAITING_APPROVAL" }}
+        <div class="actions">
+          <form method="post" action="/sessions/{{ .Session.IssueKey }}/approve">
+            <input type="hidden" name="version" value="{{ .Session.Version }}">
+            <button class="approve" type="submit">Approve</button>
+          </form>
+          <form class="inline-form" method="post" action="/sessions/{{ .Session.IssueKey }}/reject">
+            <input type="hidden" name="version" value="{{ .Session.Version }}">
+            <textarea name="reason" placeholder="Why should this plan go back for clarification?"></textarea>
+            <div style="margin-top:12px;"><button class="reject" type="submit">Reject</button></div>
+          </form>
+        </div>
+        {{ else }}
+        <div class="muted">Approval actions are only available while the session is in <code>AWAITING_APPROVAL</code>.</div>
+        {{ end }}
+      </section>
+
+      <section class="section">
+        <h2>Live Logs</h2>
+        <div class="muted">Buffered in-memory logs for active implementation and revision runs.</div>
+        <pre id="live-log" class="live-log"></pre>
+      </section>
+
+      <section class="section">
+        <h2>Clarification History</h2>
+        {{ if .Session.ClarificationCycles }}
+          {{ range .Session.ClarificationCycles }}
+          <div class="history-item">
+            <div class="history-title">Clarification cycle{{ if .JiraCommentID }} · comment {{ .JiraCommentID }}{{ end }}</div>
+            <div class="history-meta">{{ .CreatedAt.Format "2006-01-02 15:04:05 MST" }}</div>
+            <details>
+              <summary>View comment body</summary>
+              <pre>{{ .CommentBody }}</pre>
+            </details>
+          </div>
+          {{ end }}
+        {{ else }}
+          <div class="muted">No clarification cycles recorded.</div>
+        {{ end }}
+      </section>
+
+      <section class="section">
+        <h2>opencode Runs</h2>
+        {{ if .Session.Runs }}
+          {{ range .Session.Runs }}
+          <div class="history-item">
+            <div class="history-title">{{ .TaskType }} · {{ .Status }}</div>
+            <div class="history-meta">Started {{ .StartedAt.Format "2006-01-02 15:04:05 MST" }}{{ if not .FinishedAt.IsZero }} · Finished {{ .FinishedAt.Format "2006-01-02 15:04:05 MST" }}{{ end }}</div>
+            {{ if .PromptSHA }}<div class="history-meta">Prompt SHA: <code>{{ .PromptSHA }}</code></div>{{ end }}
+            {{ if .ErrorText }}<div class="error" style="margin-top:10px;">{{ .ErrorText }}</div>{{ end }}
+            {{ if .Stdout }}
+            <details>
+              <summary>View stdout</summary>
+              <pre>{{ .Stdout }}</pre>
+            </details>
+            {{ end }}
+            {{ if .Stderr }}
+            <details>
+              <summary>View stderr</summary>
+              <pre>{{ .Stderr }}</pre>
+            </details>
+            {{ end }}
+          </div>
+          {{ end }}
+        {{ else }}
+          <div class="muted">No opencode runs recorded yet.</div>
+        {{ end }}
+      </section>
+
+      <section class="section">
+        <h2>Audit Trail</h2>
+        {{ if .Session.Events }}
+          {{ range .Session.Events }}
+          <div class="history-item">
+            <div class="history-title">{{ .EventType }}</div>
+            <div class="history-meta">{{ .CreatedAt.Format "2006-01-02 15:04:05 MST" }} · actor {{ .Actor }}{{ if .FromState }} · {{ .FromState }}{{ end }}{{ if .ToState }} → {{ .ToState }}{{ end }}</div>
+            {{ if .Detail }}<pre>{{ .Detail }}</pre>{{ end }}
+          </div>
+          {{ end }}
+        {{ else }}
+          <div class="muted">No audit events recorded yet.</div>
+        {{ end }}
+      </section>
+    </main>
+    <script>
+      (function () {
+        const logEl = document.getElementById('live-log')
+        if (!logEl) return
+
+        const sessionState = {{ printf "%q" .Session.State }}
+        const issueKey = {{ printf "%q" .Session.IssueKey }}
+        const streamUrl = `/sessions/${encodeURIComponent(issueKey)}/logs`
+
+        function append(entry) {
+          const stamp = entry.timestamp ? new Date(entry.timestamp).toLocaleTimeString() : '--:--:--'
+          const stream = entry.stream || 'log'
+          const message = entry.message || ''
+          logEl.textContent += `[${stamp}] ${stream}: ${message}\n`
+          logEl.scrollTop = logEl.scrollHeight
+        }
+
+        if (sessionState !== 'IMPLEMENTING' && sessionState !== 'REVISING') {
+          logEl.textContent = 'Session is not actively running. New logs will appear here the next time implementation or revision starts.'
+        }
+
+        const source = new EventSource(streamUrl)
+        source.addEventListener('log', (event) => {
+          try {
+            append(JSON.parse(event.data))
+          } catch (error) {
+            console.error('failed to parse log event', error)
+          }
+        })
+        source.onerror = () => {
+          if (source.readyState === EventSource.CLOSED) {
+            return
+          }
+        }
+        window.addEventListener('beforeunload', () => source.close())
+      })()
+    </script>
+  </body>
+</html>

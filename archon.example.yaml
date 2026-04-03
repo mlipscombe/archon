@@ -1,0 +1,29 @@
+# Repo-local Archon configuration.
+# This file is intended to live at ./archon.yaml and be safe to commit.
+
+mode: sandbox
+
+jira:
+  projects:
+    - key: ENG
+      watch_filter: |
+        project = ENG
+        AND issuetype in (Story, Task, Bug)
+        AND status = "Ready for Dev"
+        AND assignee is EMPTY
+      auto_transition: true
+      transitions:
+        in_progress: "In Progress"
+        in_review: "In Review"
+        done: "Done"
+
+github:
+  repo: "owner/repo"
+  base_branch: main
+  draft_prs: false
+  labels:
+    - archon-generated
+  default_reviewers: []
+
+repo:
+  path: .

@@ -1,0 +1,83 @@
+name: Docker Publish
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  ARCHON_IMAGE: ghcr.io/mlipscombe/archon
+  SANDBOX_IMAGE: ghcr.io/mlipscombe/archon-opencode-sandbox
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker metadata (archon)
+        id: archon_meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.ARCHON_IMAGE }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=ref,event=branch
+            type=ref,event=tag
+            type=sha
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+
+      - name: Docker metadata (sandbox)
+        id: sandbox_meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.SANDBOX_IMAGE }}
+          tags: |
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=ref,event=branch
+            type=ref,event=tag
+            type=sha
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+
+      - name: Build and push Archon image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.archon_meta.outputs.tags }}
+          labels: ${{ steps.archon_meta.outputs.labels }}
+
+      - name: Build and push sandbox image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile.sandbox
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.sandbox_meta.outputs.tags }}
+          labels: ${{ steps.sandbox_meta.outputs.labels }}

@@ -1,0 +1,55 @@
+# User-level Archon configuration.
+# Copy this to ~/.archon/archon.yaml on your machine.
+
+ui:
+  host: "0.0.0.0"
+  port: 8080
+  auth:
+    enabled: false
+    username: archon
+    password: "change-me-if-enabled"
+
+jira:
+  base_url: "https://your-org.atlassian.net"
+  auth_method: api_token
+  email: "you@company.com"
+  api_token: "jira-api-token"
+  oauth_token: ""
+  poll_interval_seconds: 60
+  debounce_seconds: 30
+  escalation_timeout_business_days: 5
+
+github:
+  auth_method: oauth_browser # oauth_browser | token
+  token: ""
+  oauth_browser:
+    # client_id omitted: Archon uses the built-in public OAuth client by default
+    scopes:
+      - repo
+      - read:user
+      - read:packages
+      - read:org
+    token_store_path: ~/.archon/github-oauth.json
+
+opencode:
+  binary_path: opencode
+  timeout_minutes: 30
+  max_concurrent_sessions: 3
+  max_concurrent_evaluations: 2
+  max_revision_cycles: 3
+
+sandbox:
+  enabled: true
+  image: ghcr.io/mlipscombe/archon-opencode-sandbox:latest
+  cpu_limit: "4"
+  memory_limit: 8g
+  network: bridge
+
+state_store:
+  path: ~/.archon/archon.db
+
+confidence_threshold: 0.7
+
+log:
+  level: info
+  format: pretty

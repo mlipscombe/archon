@@ -1,0 +1,13 @@
+.git
+.gitignore
+bin
+dist
+.DS_Store
+.idea
+.vscode
+.archon
+coverage.out
+*.test
+*.out
+node_modules
+archon.yaml

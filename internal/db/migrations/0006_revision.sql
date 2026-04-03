@@ -1,0 +1,2 @@
+ALTER TABLE sessions ADD COLUMN revision_feedback TEXT NOT NULL DEFAULT '';
+ALTER TABLE sessions ADD COLUMN revision_count INTEGER NOT NULL DEFAULT 0;

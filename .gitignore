@@ -1,0 +1,17 @@
+# Binaries
+/bin/
+/dist/
+
+# Go build/test artifacts
+*.test
+*.out
+coverage.out
+
+# Local config and state
+.env
+.archon/
+
+# Editor / OS noise
+.DS_Store
+.idea/
+.vscode/

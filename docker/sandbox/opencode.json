@@ -1,0 +1,15 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "autoupdate": false,
+  "permission": {
+    "*": "allow"
+  },
+  "provider": {
+    "anthropic": {
+      "options": {
+        "timeout": 600000,
+        "chunkTimeout": 60000
+      }
+    }
+  }
+}
